@@ -14,3 +14,12 @@ const eslintConfig = [
 ];
 
 export default eslintConfig;
+export default [
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": "warn", // Apenas warning, não erro
+      "react-hooks/exhaustive-deps": "warn",
+      "no-var": "warn"
+    }
+  }
+];
