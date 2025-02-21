@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Meeting {
+  id               String    @id @default(cuid())
+  title            String
+  date             DateTime
+  startTime        String
+  endTime          DateTime
+  duration         Float
+  roomId           String    // 'free' para atas livres
+  roomName         String    // 'Ata Livre' para atas livres
+  location         String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  minutes          Minutes?
+  participants     User[]    @relation("MeetingParticipants")
+  viewers          User[]    @relation("MinutesViewers")
+  isRecurring      Boolean   @default(false)
+  recurrenceId     String?
+  recurrenceType   String?
+  recurrenceEndDate DateTime?
+  isFreeMinutes    Boolean   @default(false)
+}
+
+model Minutes {
+  id            String   @id @default(cuid())
+  meetingId     String   @unique
+  meeting       Meeting  @relation(fields: [meetingId], references: [id])
+  content       String?
+  location      String
+  participants  String
+  objective     String
+  agenda        String
+  discussions   String
+  decisions     String
+  actions       String
+  nextSteps     String
+  observations  String?
+  secretary     String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  name               String
+  email              String    @unique
+  password           String
+  role               String    @default("USER")
+  permissions        String    @default("{\"permissions\":[\"CREATE_FREE_MINUTES\",\"VIEW_FREE_MINUTES\"]}")
+  participatedMeetings Meeting[] @relation("MeetingParticipants")
+  viewableMeetings    Meeting[] @relation("MinutesViewers")
+} 
